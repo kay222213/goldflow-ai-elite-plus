@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#08090b"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="description" content="The Fundamental Edge GoldFlow AI — XAUUSD technical and macro decision-support dashboard."><title>The Fundamental Edge | GoldFlow AI</title>
+<link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css">
+</head><body>
+<header class="top"><div class="brand"><div class="crown">♛</div><div><div class="eyebrow">THE FUNDAMENTAL EDGE</div><h1>GOLDFLOW <span>AI</span></h1><p>MACRO · LIQUIDITY · PRECISION</p></div></div><div class="status"><i id="statusDot"></i><b id="feedStatus">DATA NOT VERIFIED</b><small id="updated">Waiting for scan</small></div></header>
+<main>
+<section class="hero panel"><div><div class="eyebrow">XAUUSD DECISION ENGINE</div><h2 id="signal">NO TRADE</h2><p id="signalReason">Live sources are not yet verified. An offline self-test is available, but it is not a live feed test.</p></div><div class="pricebox"><label>Latest candle close (reference only)</label><strong id="price">—</strong><small id="priceTime">Awaiting feed</small></div></section>
+<section class="grid">
+<article class="panel"><div class="sectionhead"><h3>Data connections</h3><span class="tag">Configure once</span></div>
+<label>Twelve Data API key <input id="apiKey" type="password" autocomplete="off" placeholder="Required for XAUUSD + timeframes"></label>
+<label>Gold symbol <input id="goldSymbol" value="XAU/USD"></label>
+<label>USD index / proxy symbol <input id="dxySymbol" value="DXY"></label><button id="findUsd" class="secondary block" type="button">FIND / VERIFY USD SYMBOL</button><div id="usdResults" class="symbol-results"></div>
+<label>FRED API key (US 10-year yield) <input id="fredKey" type="password" autocomplete="off" placeholder="Required for macro-confirmed scan"></label>
+<label>GDELT news lookback <select id="newsWindow"><option value="3">Last 3 hours</option><option value="6" selected>Last 6 hours</option><option value="12">Last 12 hours</option><option value="24">Last 24 hours</option></select></label>
+<label class="checkline"><input type="checkbox" id="rememberKeys"> Remember API keys on this device (less secure)</label><div class="actions"><button id="save">SAVE SETTINGS</button><button id="clear" class="secondary">CLEAR KEYS</button></div><p id="saveState" class="muted">API keys are not stored unless you opt in.</p>
+<p class="muted">Twelve Data and FRED keys are entered on your phone. The app runs in the browser; keys are not securely hidden from the device/browser. They are not saved unless you opt in. Use limited keys if the provider offers that option. Symbol coverage, intervals, latency and quota depend on your account plan.</p>
+</article>
+<article class="panel"><div class="sectionhead"><h3>Risk & execution assumptions</h3><span class="tag">Manual execution</span></div>
+<div class="fields"><label>Account equity <input id="equity" type="number" value="2200" min="0" step=".01"></label><label>Risk per trade (%) <input id="risk" type="number" value="1" min=".1" max="2" step=".1"></label><label>Target R multiple <input id="rr" type="number" value="2.5" min="1" max="5" step=".1"></label><label>Refresh <select id="refresh"><option value="0" selected>Manual (recommended during setup)</option><option value="300000">5 minutes</option><option value="900000">15 minutes</option></select></label></div>
+<button id="scan" class="primary block">SCAN ALL DATA SOURCES</button>
+<div class="monitor-controls">
+  <button id="startMonitor" class="primary" type="button">START SCANNING</button>
+  <button id="stopMonitor" class="secondary" type="button" disabled>STOP SCANNING</button>
+</div>
+<p id="monitorState" class="muted" role="status" aria-live="polite">Stopped. Choose Manual, 5 minutes or 15 minutes, then press Start.</p><button id="selfTest" class="secondary block">RUN OFFLINE SELF-TEST (NO API KEYS)</button><p id="selfTestSummary" class="muted">Self-test checks the local app logic only. It does not fetch live market data.</p><div id="selfTestResults" class="test-results"></div>
+<p class="muted">Default risk is 1% (maximum enforced: 2%). No broker order execution. Position sizing is withheld until broker contract size, tick value, account currency and conversion are confirmed. Auto-refresh is manual by default to avoid wasting API quota.</p>
+</article>
+<article class="panel wide" id="profitManagerPanel">
+<div class="sectionhead"><h3>Profit Manager & Daily Target Tracker</h3><span id="profitStatusTag" class="tag">TARGET NOT SET</span></div>
+<p class="muted">Tracks your manually entered realised P/L against a daily target. It does not place trades or force the strategy to take trades. The safety gate can stop future scans when the target or loss limit is reached.</p>
+<div class="fields">
+<label>Daily profit target (ZAR) <input id="dailyTarget" type="number" min="0" step="1" value="2000"></label>
+<label>Realised P/L today (ZAR) <input id="realizedPnl" type="number" step=".01" value="0"></label>
+<label>Daily loss limit (ZAR) <input id="dailyLossLimit" type="number" min="0" step="1" value="100"></label>
+<label>Daily tracker <button id="resetProfitDay" class="secondary" type="button">RESET DAILY TRACKER</button></label>
+</div>
+<div class="profit-stats">
+<div><label>Target progress</label><strong id="profitProgressText">0%</strong></div>
+<div><label>Remaining to target</label><strong id="profitRemaining">R2,000.00</strong></div>
+<div><label>Daily status</label><strong id="profitDecision">TARGET ACTIVE</strong></div>
+</div>
+<div class="progress-track" role="progressbar" aria-label="Daily profit target progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="profitProgressBar" class="progress-fill"></div></div>
+<p id="profitManagerNote" class="muted">Update realised P/L manually from your broker statement. This dashboard does not import broker P/L.</p>
+</article>
+<article class="panel"><div class="sectionhead"><h3>Trade plan</h3><span id="planTag" class="tag">WAITING</span></div><div class="tradegrid"><div><label>Entry reference</label><strong id="entry">—</strong></div><div><label>Stop loss</label><strong id="sl">—</strong></div><div><label>Take profit</label><strong id="tp">—</strong></div><div><label>Risk budget (ZAR)</label><strong id="riskAmt">—</strong></div><div><label>Position size</label><strong>Not verified</strong></div><div><label>Reward/risk</label><strong id="rrOut">—</strong></div></div><p class="muted" id="planNote">No setup is trade-ready until all required gates pass.</p></article>
+<article class="panel"><div class="sectionhead"><h3>Feed health</h3><span class="tag">Live verification</span></div><div class="source-list"><div><span>Twelve Data · Gold candles</span><b id="sourceTd" class="source-state idle">Not tested</b></div><div><span>Twelve Data · USD index / proxy</span><b id="sourceUsd" class="source-state idle">Not tested</b></div><div><span>FRED · US 10-year yield</span><b id="sourceFred" class="source-state idle">Not tested</b></div><div><span>GDELT · headlines</span><b id="sourceNews" class="source-state idle">Not tested</b></div><div><span>TradingView · visual chart</span><b id="sourceChart" class="source-state idle">Visual widget only</b></div></div><p class="muted">The offline self-test cannot verify APIs. Live source health changes only after a live scan or symbol lookup. If Twelve Data returns an error, the USD symbol lookup shows supported matches when available.</p></article>
+<article class="panel"><div class="sectionhead"><h3>Confluence gates</h3><span class="tag">Fail closed</span></div><div id="gates" class="checks"><div>H4/H1 structure <b>Pending</b></div><div>M15 context <b>Pending</b></div><div>M5 sweep + displacement <b>Pending</b></div><div>ATR volatility <b>Pending</b></div><div>DXY direction <b>Pending</b></div><div>US 10Y yield <b>Pending</b></div><div>Macro/news context <b>Pending</b></div><div>Feed freshness <b>Pending</b></div></div><p class="warning">A headline scanner is context, not reliable machine sentiment. No headline alone triggers a trade. If any required data is unavailable or contradictory, the engine returns NO TRADE.</p></article>
+<article class="panel wide"><div class="sectionhead"><h3>Market chart</h3><span class="tag">TradingView visual</span></div><div id="tvchart"></div><p class="muted">TradingView's embedded widget is visual only; it does not feed candle data to this app. GoldFlow computes from the separately configured market-data API instead. <a href="https://www.tradingview.com/widget-docs/faq/data/" target="_blank" rel="noopener">TradingView data FAQ</a>.</p></article>
+<article class="panel wide"><div class="sectionhead"><h3>Macro calendar</h3><a href="https://www.tradingview.com/economic-calendar/" target="_blank" rel="noopener">Open TradingView Economic Calendar ↗</a></div><p class="muted">Calendar link opens the official calendar. Its events are not scraped into the signal engine; verify high-impact US releases manually before trading. A licensed machine-readable calendar feed would be required to automate this gate.</p></article>
+<article class="panel wide"><div class="sectionhead"><h3>Recent macro/geopolitical headlines</h3><span class="tag">GDELT public search</span></div><div id="newsState" class="muted">News scan not run</div><ul id="news"></ul><p class="muted">Headlines are fetched from GDELT when available. Coverage, language, classification and relevance can be imperfect; headlines are not a substitute for primary-source verification.</p></article>
+<article class="panel wide"><div class="sectionhead"><h3>Scan log</h3><button id="clearLog" class="secondary">Clear log</button></div><ol id="log"></ol></article>
+</section></main><footer><b>THE FUNDAMENTAL EDGE</b><span>MACRO | LIQUIDITY | PRECISION</span><small>Decision support only · Not financial advice · No guaranteed accuracy or profit</small></footer>
+<script src="app.js"></script><script src="https://s3.tradingview.com/tv.js"></script>
+<script>window.addEventListener('load',()=>{try{if(window.TradingView){new TradingView.widget({autosize:true,symbol:"OANDA:XAUUSD",interval:"5",timezone:"Africa/Johannesburg",theme:"dark",style:"1",locale:"en",enable_publishing:false,hide_top_toolbar:false,save_image:false,container_id:"tvchart"});document.getElementById("sourceChart").textContent="Widget requested · visual only";document.getElementById("sourceChart").className="source-state warn";}else{document.getElementById("sourceChart").textContent="TradingView script not loaded";document.getElementById("sourceChart").className="source-state bad";}}catch(e){document.getElementById("sourceChart").textContent="Widget failed to initialize";document.getElementById("sourceChart").className="source-state bad";}});</script>
+</body></html>
